@@ -254,6 +254,8 @@
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/*IT.java</exclude>
                     </excludes>
+                    <!-- Exclude integration tagged tests -->
+                    <excludedGroups>integration</excludedGroups>
                 </configuration>
             </plugin>
 
@@ -266,6 +268,8 @@
                         <include>**/*IntegrationTest.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <!-- Include integration tagged tests -->
+                    <groups>integration</groups>
                 </configuration>
                 <executions>
                     <execution>
