@@ -62,15 +62,11 @@
         </properties>
     </rule>
 
-    <rule ref="category/java/design.xml/ExcessiveMethodLength">
+    <!-- NcssCount replaces ExcessiveMethodLength/ExcessiveClassLength in PMD 7 -->
+    <rule ref="category/java/design.xml/NcssCount">
         <properties>
-            <property name="minimum" value="100"/>
-        </properties>
-    </rule>
-
-    <rule ref="category/java/design.xml/ExcessiveClassLength">
-        <properties>
-            <property name="minimum" value="500"/>
+            <property name="methodReportLevel" value="100"/>
+            <property name="classReportLevel" value="500"/>
         </properties>
     </rule>
 
@@ -85,8 +81,7 @@
         <exclude name="AvoidDuplicateLiterals"/>
         <exclude name="AvoidFieldNameMatchingMethodName"/>
         <exclude name="AvoidLiteralsInIfCondition"/>
-        <exclude name="BeanMembersShouldSerialize"/>
-        <exclude name="DataflowAnomalyAnalysis"/>
+        <!-- BeanMembersShouldSerialize and DataflowAnomalyAnalysis removed in PMD 7 -->
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="NullAssignment"/>
     </rule>
