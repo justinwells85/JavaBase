@@ -40,6 +40,11 @@ public abstract class AbstractIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+
+        // JPA configuration - override H2 dialect with PostgreSQL
+        registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
 
         // RabbitMQ configuration
         registry.add("spring.rabbitmq.host", rabbitmq::getHost);
@@ -49,7 +54,6 @@ public abstract class AbstractIntegrationTest {
 
         // Enable Liquibase for tests
         registry.add("spring.liquibase.enabled", () -> "true");
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
 
         // Disable outbox processor during tests
         registry.add("outbox.polling.enabled", () -> "false");
