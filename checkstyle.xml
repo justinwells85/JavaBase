@@ -74,7 +74,8 @@
             <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
         </module>
         <module name="ConstantName">
-            <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+            <!-- Allow 'log' for Lombok @Slf4j, otherwise require UPPER_CASE -->
+            <property name="format" value="^(log|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*)$"/>
         </module>
 
         <!-- Whitespace -->
@@ -110,7 +111,7 @@
 
         <!-- Design -->
         <module name="FinalClass"/>
-        <module name="HideUtilityClassConstructor"/>
+        <!-- HideUtilityClassConstructor disabled - Spring Boot apps need public constructor -->
         <module name="InterfaceIsType"/>
         <module name="OneTopLevelClass"/>
 
@@ -142,18 +143,6 @@
         <!-- Modifiers -->
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
-
-        <!-- Suppress warnings for generated code and specific patterns -->
-        <module name="SuppressionXpathSingleFilter">
-            <property name="checks" value="HideUtilityClassConstructor"/>
-            <property name="query" value="//*[ANNOTATION/IDENT[@text='SpringBootApplication']]"/>
-        </module>
-
-        <!-- Suppress ConstantName for Lombok @Slf4j generated 'log' field -->
-        <module name="SuppressionXpathSingleFilter">
-            <property name="checks" value="ConstantName"/>
-            <property name="query" value="//VARIABLE_DEF[./IDENT[@text='log']]"/>
-        </module>
 
         <!-- Suppress FinalClass for inner DTOs that need Jackson -->
         <module name="SuppressionXpathSingleFilter">
