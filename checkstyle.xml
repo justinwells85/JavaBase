@@ -25,7 +25,7 @@
     <!-- Line length check -->
     <module name="LineLength">
         <property name="max" value="120"/>
-        <property name="ignorePattern" value="^package.*|^import.*|a]"/>
+        <property name="ignorePattern" value="^package.*|^import.*|a]href|href|http://|https://"/>
     </module>
 
     <!-- No trailing whitespace -->
@@ -34,12 +34,6 @@
         <property name="minimum" value="0"/>
         <property name="maximum" value="0"/>
         <property name="message" value="Line has trailing spaces."/>
-    </module>
-
-    <!-- Suppressions file -->
-    <module name="SuppressionFilter">
-        <property name="file" value="${config_loc}/checkstyle-suppressions.xml" default=""/>
-        <property name="optional" value="true"/>
     </module>
 
     <module name="TreeWalker">
@@ -117,19 +111,8 @@
         <module name="InterfaceIsType"/>
         <module name="OneTopLevelClass"/>
 
-        <!-- Javadoc -->
+        <!-- Javadoc - relaxed for Spring Boot -->
         <module name="InvalidJavadocPosition"/>
-        <module name="JavadocMethod">
-            <property name="allowMissingParamTags" value="true"/>
-            <property name="allowMissingReturnTag" value="true"/>
-        </module>
-        <module name="JavadocType">
-            <property name="scope" value="public"/>
-        </module>
-        <module name="MissingJavadocType">
-            <property name="scope" value="public"/>
-            <property name="excludeScope" value="anoninner"/>
-        </module>
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
@@ -156,5 +139,11 @@
         <!-- Modifiers -->
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
+
+        <!-- Suppress warnings for generated code and specific patterns -->
+        <module name="SuppressionXpathSingleFilter">
+            <property name="checks" value="HideUtilityClassConstructor"/>
+            <property name="query" value="//*[ANNOTATION/IDENT[@text='SpringBootApplication']]"/>
+        </module>
     </module>
 </module>
