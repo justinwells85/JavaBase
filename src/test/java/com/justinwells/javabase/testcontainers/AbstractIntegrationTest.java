@@ -1,11 +1,10 @@
 package com.justinwells.javabase.testcontainers;
 
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -22,7 +21,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
-@EnabledIf("isDockerAvailable")
+@ExtendWith(DockerAvailableCondition.class)
 public abstract class AbstractIntegrationTest {
 
     @Container
@@ -54,19 +53,5 @@ public abstract class AbstractIntegrationTest {
 
         // Disable outbox processor during tests
         registry.add("outbox.polling.enabled", () -> "false");
-    }
-
-    /**
-     * Checks if Docker is available on the system.
-     *
-     * @return true if Docker is available, false otherwise
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
     }
 }
