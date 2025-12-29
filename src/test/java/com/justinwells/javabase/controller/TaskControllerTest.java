@@ -7,6 +7,7 @@ import com.justinwells.javabase.domain.model.TaskStatus;
 import com.justinwells.javabase.dto.v1.TaskRequest;
 import com.justinwells.javabase.exception.GlobalExceptionHandler;
 import com.justinwells.javabase.exception.TaskNotFoundException;
+import com.justinwells.javabase.infrastructure.idempotency.IdempotencyService;
 import com.justinwells.javabase.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,19 +16,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -42,8 +42,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TaskController.class)
-@Import(GlobalExceptionHandler.class)
+@WebMvcTest(value = TaskController.class,
+    excludeFilters = @ComponentScan.Filter(
+        type = FilterType.REGEX,
+        pattern = "com\\.justinwells\\.javabase\\.infrastructure\\..*"
+    )
+)
 @DisplayName("TaskController Tests")
 class TaskControllerTest {
 
@@ -55,6 +59,9 @@ class TaskControllerTest {
 
     @MockBean
     private TaskService taskService;
+
+    @MockBean
+    private IdempotencyService idempotencyService;
 
     private Task testTask;
     private UUID taskId;
