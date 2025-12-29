@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-tasks-table" author="javabase">
+        <comment>Create tasks table for the Task domain entity</comment>
+
+        <createTable tableName="tasks">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assignee" type="VARCHAR(255)"/>
+            <column name="due_date" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMP"/>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_tasks_status" tableName="tasks">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex indexName="idx_tasks_assignee" tableName="tasks">
+            <column name="assignee"/>
+        </createIndex>
+
+        <createIndex indexName="idx_tasks_deleted_at" tableName="tasks">
+            <column name="deleted_at"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex indexName="idx_tasks_deleted_at" tableName="tasks"/>
+            <dropIndex indexName="idx_tasks_assignee" tableName="tasks"/>
+            <dropIndex indexName="idx_tasks_status" tableName="tasks"/>
+            <dropTable tableName="tasks"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

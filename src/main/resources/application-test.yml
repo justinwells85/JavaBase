@@ -1,0 +1,59 @@
+# Test Profile Configuration
+# Used for integration tests with Testcontainers
+
+spring:
+  # Datasource will be configured by Testcontainers
+  datasource:
+    url: jdbc:tc:postgresql:16:///javabase
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  # JPA Configuration for tests
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # Liquibase
+  liquibase:
+    contexts: test
+
+  # In-memory caching for tests
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=60s
+
+  # Cloud Stream - Use test binder
+  cloud:
+    stream:
+      bindings:
+        taskEventsOut-out-0:
+          destination: test-task-events
+        taskEventsIn-in-0:
+          destination: test-task-events
+          group: test-consumer
+
+# Faster polling intervals for tests
+outbox:
+  polling:
+    interval-ms: 100
+    batch-size: 10
+
+idempotency:
+  ttl-hours: 1
+  cleanup:
+    interval-ms: 60000
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+# Minimal logging during tests
+logging:
+  level:
+    root: WARN
+    com.justinwells.javabase: INFO
+    org.testcontainers: INFO

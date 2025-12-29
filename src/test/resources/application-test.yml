@@ -1,0 +1,47 @@
+# Test Resources Configuration
+# This file provides additional test-specific overrides
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  # Disable security for tests by default
+  security:
+    enabled: false
+
+  # Use H2 for unit tests (Testcontainers for integration tests)
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  liquibase:
+    enabled: false
+
+  # Disable RabbitMQ for unit tests
+  rabbitmq:
+    listener:
+      simple:
+        auto-startup: false
+
+  # Use test binder
+  cloud:
+    function:
+      definition: ""
+
+# Disable scheduled tasks in tests
+outbox:
+  polling:
+    enabled: false
+
+# Logging
+logging:
+  level:
+    root: WARN
+    com.justinwells.javabase: DEBUG

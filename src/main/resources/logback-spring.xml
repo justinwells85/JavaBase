@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Property for service name -->
+    <springProperty scope="context" name="serviceName" source="spring.application.name" defaultValue="javabase"/>
+
+    <!-- Console appender for development (human-readable) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{correlationId:-}] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- JSON appender for production (machine-readable) -->
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdcKeyName>correlationId</includeMdcKeyName>
+            <customFields>{"service":"${serviceName}"}</customFields>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+            <timeZone>UTC</timeZone>
+        </encoder>
+    </appender>
+
+    <!-- Development profile: Human-readable logs -->
+    <springProfile name="dev,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <!-- Application-specific logging -->
+        <logger name="com.justinwells.javabase" level="DEBUG"/>
+
+        <!-- Spring framework -->
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework.web" level="DEBUG"/>
+
+        <!-- SQL logging -->
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/>
+
+        <!-- Liquibase -->
+        <logger name="liquibase" level="INFO"/>
+    </springProfile>
+
+    <!-- Test profile: Minimal logging -->
+    <springProfile name="test">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="com.justinwells.javabase" level="INFO"/>
+        <logger name="org.testcontainers" level="INFO"/>
+    </springProfile>
+
+    <!-- Production profile: JSON structured logs -->
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="JSON"/>
+        </root>
+
+        <!-- Application-specific logging -->
+        <logger name="com.justinwells.javabase" level="INFO"/>
+
+        <!-- Spring framework -->
+        <logger name="org.springframework" level="WARN"/>
+
+        <!-- Hibernate -->
+        <logger name="org.hibernate" level="WARN"/>
+
+        <!-- Suppress noisy loggers -->
+        <logger name="org.apache" level="WARN"/>
+        <logger name="com.zaxxer.hikari" level="WARN"/>
+    </springProfile>
+</configuration>

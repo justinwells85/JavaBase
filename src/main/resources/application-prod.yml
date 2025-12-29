@@ -1,0 +1,68 @@
+# Production Profile Configuration
+# Use with: --spring.profiles.active=prod
+
+spring:
+  # Database - Production connection pooling
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      idle-timeout: 600000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # JPA - Optimize for production
+  jpa:
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        generate_statistics: false
+
+  # Liquibase
+  liquibase:
+    contexts: prod
+
+  # Production cache settings
+  cache:
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=300s
+
+# Server Configuration
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+
+# Actuator - Restricted endpoints in production
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+    env:
+      enabled: false
+    configprops:
+      enabled: false
+
+# Springdoc - Disable in production (optional)
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
+
+# Production logging - JSON structured
+logging:
+  level:
+    root: WARN
+    com.justinwells.javabase: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
