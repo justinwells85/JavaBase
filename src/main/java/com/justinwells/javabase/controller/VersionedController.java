@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * consistent version headers across the API.
  */
 @RestController
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod") // Intentionally abstract to prevent instantiation
 public abstract class VersionedController {
 
     /**
