@@ -148,5 +148,17 @@
             <property name="checks" value="HideUtilityClassConstructor"/>
             <property name="query" value="//*[ANNOTATION/IDENT[@text='SpringBootApplication']]"/>
         </module>
+
+        <!-- Suppress ConstantName for Lombok @Slf4j generated 'log' field -->
+        <module name="SuppressionXpathSingleFilter">
+            <property name="checks" value="ConstantName"/>
+            <property name="query" value="//VARIABLE_DEF[./IDENT[@text='log']]"/>
+        </module>
+
+        <!-- Suppress FinalClass for inner DTOs that need Jackson -->
+        <module name="SuppressionXpathSingleFilter">
+            <property name="checks" value="FinalClass"/>
+            <property name="query" value="//CLASS_DEF[./IDENT[contains(@text, 'Response')]]"/>
+        </module>
     </module>
 </module>

@@ -5,7 +5,6 @@ import com.justinwells.javabase.controller.v1.TaskController;
 import com.justinwells.javabase.domain.model.Task;
 import com.justinwells.javabase.domain.model.TaskStatus;
 import com.justinwells.javabase.dto.v1.TaskRequest;
-import com.justinwells.javabase.exception.GlobalExceptionHandler;
 import com.justinwells.javabase.exception.TaskNotFoundException;
 import com.justinwells.javabase.infrastructure.idempotency.IdempotencyService;
 import com.justinwells.javabase.service.TaskService;
