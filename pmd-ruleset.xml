@@ -47,6 +47,7 @@
     <rule ref="category/java/design.xml">
         <exclude name="AbstractClassWithoutAbstractMethod"/> <!-- Valid for base controllers -->
         <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="AvoidThrowingRawExceptionTypes"/> <!-- Moved from errorprone in PMD 7 -->
         <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
         <exclude name="DataClass"/> <!-- DTOs and entities ARE data classes -->
         <exclude name="ExcessiveImports"/> <!-- Controllers often need many imports -->
@@ -91,8 +92,8 @@
         <exclude name="AvoidDuplicateLiterals"/>
         <exclude name="AvoidFieldNameMatchingMethodName"/>
         <exclude name="AvoidLiteralsInIfCondition"/>
-        <exclude name="AvoidThrowingRawExceptionTypes"/> <!-- Sometimes necessary -->
         <!-- BeanMembersShouldSerialize and DataflowAnomalyAnalysis removed in PMD 7 -->
+        <!-- AvoidThrowingRawExceptionTypes moved to design.xml in PMD 7 -->
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="NullAssignment"/>
         <exclude name="UseLocaleWithCaseConversions"/> <!-- Not relevant for technical strings -->

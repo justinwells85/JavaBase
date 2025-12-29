@@ -28,9 +28,9 @@
         <spotbugs.version>4.8.6</spotbugs.version>
         <pmd.version>7.8.0</pmd.version>
 
-        <!-- Code Quality Thresholds -->
-        <jacoco.line.coverage>0.80</jacoco.line.coverage>
-        <jacoco.branch.coverage>0.70</jacoco.branch.coverage>
+        <!-- Code Quality Thresholds (baseline - increase as tests are added) -->
+        <jacoco.line.coverage>0.30</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.15</jacoco.branch.coverage>
     </properties>
 
     <dependencyManagement>
@@ -303,8 +303,7 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <!-- Non-blocking for initial setup; enable once test coverage improves -->
-                            <haltOnFailure>false</haltOnFailure>
+                            <haltOnFailure>true</haltOnFailure>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
@@ -342,8 +341,8 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
-                    <failOnViolation>false</failOnViolation>
-                    <violationSeverity>error</violationSeverity>
+                    <failOnViolation>true</failOnViolation>
+                    <violationSeverity>warning</violationSeverity>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
                 <executions>
@@ -388,8 +387,7 @@
                     <rulesets>
                         <ruleset>pmd-ruleset.xml</ruleset>
                     </rulesets>
-                    <!-- Non-blocking for initial setup -->
-                    <failOnViolation>false</failOnViolation>
+                    <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
                     <targetJdk>${java.version}</targetJdk>
                 </configuration>

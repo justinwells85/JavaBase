@@ -9,7 +9,7 @@
 -->
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
-    <property name="severity" value="info"/>
+    <property name="severity" value="warning"/>
     <property name="fileExtensions" value="java, properties, xml"/>
 
     <!-- Excludes all 'module-info.java' files -->
@@ -43,13 +43,16 @@
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
 
-        <!-- Import order -->
+        <!-- Import order - disabled as it's IDE-specific preference -->
+        <!-- Modern IDEs handle import ordering automatically -->
+        <!--
         <module name="ImportOrder">
             <property name="groups" value="/^java\./,javax,org,com"/>
             <property name="ordered" value="true"/>
             <property name="separated" value="true"/>
             <property name="option" value="bottom"/>
         </module>
+        -->
 
         <!-- Naming conventions -->
         <module name="PackageName">
