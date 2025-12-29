@@ -20,8 +20,10 @@
     <!-- Code Style -->
     <rule ref="category/java/codestyle.xml">
         <exclude name="AtLeastOneConstructor"/>
+        <exclude name="CallSuperInConstructor"/>
         <exclude name="CommentDefaultAccessModifier"/>
         <exclude name="ConfusingTernary"/>
+        <exclude name="FieldNamingConventions"/> <!-- Lombok @Slf4j uses 'log' -->
         <exclude name="LocalVariableCouldBeFinal"/>
         <exclude name="LongVariable"/>
         <exclude name="MethodArgumentCouldBeFinal"/>
@@ -30,6 +32,8 @@
         <exclude name="ShortMethodName"/>
         <exclude name="ShortVariable"/>
         <exclude name="TooManyStaticImports"/>
+        <exclude name="UnnecessaryConstructor"/> <!-- Jackson/JPA need explicit constructors -->
+        <exclude name="UseUnderscoresInNumericLiterals"/>
     </rule>
 
     <!-- Configure specific rules -->
@@ -41,12 +45,17 @@
 
     <!-- Design -->
     <rule ref="category/java/design.xml">
+        <exclude name="AbstractClassWithoutAbstractMethod"/> <!-- Valid for base controllers -->
         <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
+        <exclude name="DataClass"/> <!-- DTOs and entities ARE data classes -->
+        <exclude name="ExcessiveImports"/> <!-- Controllers often need many imports -->
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
         <exclude name="SignatureDeclareThrowsException"/>
         <exclude name="TooManyMethods"/>
         <exclude name="UseObjectForClearerAPI"/>
+        <exclude name="UseUtilityClass"/> <!-- Spring Boot main class -->
     </rule>
 
     <rule ref="category/java/design.xml/CyclomaticComplexity">
@@ -74,6 +83,7 @@
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired"/>
         <exclude name="CommentSize"/>
+        <exclude name="UncommentedEmptyConstructor"/> <!-- JPA/Jackson require empty constructors -->
     </rule>
 
     <!-- Error Prone -->
@@ -81,9 +91,11 @@
         <exclude name="AvoidDuplicateLiterals"/>
         <exclude name="AvoidFieldNameMatchingMethodName"/>
         <exclude name="AvoidLiteralsInIfCondition"/>
+        <exclude name="AvoidThrowingRawExceptionTypes"/> <!-- Sometimes necessary -->
         <!-- BeanMembersShouldSerialize and DataflowAnomalyAnalysis removed in PMD 7 -->
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="NullAssignment"/>
+        <exclude name="UseLocaleWithCaseConversions"/> <!-- Not relevant for technical strings -->
     </rule>
 
     <!-- Multithreading -->
