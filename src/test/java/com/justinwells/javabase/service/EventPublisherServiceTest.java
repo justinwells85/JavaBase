@@ -3,6 +3,8 @@ package com.justinwells.javabase.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justinwells.javabase.domain.event.TaskCreatedEvent;
+import com.justinwells.javabase.domain.model.Task;
+import com.justinwells.javabase.domain.model.TaskStatus;
 import com.justinwells.javabase.domain.repository.OutboxEventRepository;
 import com.justinwells.javabase.infrastructure.outbox.OutboxEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,15 +47,10 @@ class EventPublisherServiceTest {
     @Test
     @DisplayName("should save event to outbox with correct fields")
     void shouldSaveEventToOutbox() throws JsonProcessingException {
-        UUID taskId = UUID.randomUUID();
-        String correlationId = UUID.randomUUID().toString();
-        TaskCreatedEvent event = new TaskCreatedEvent(
-            taskId,
-            "Test Task",
-            "testuser",
-            correlationId
-        );
-        String expectedPayload = "{\"taskId\":\"" + taskId + "\"}";
+        Task task = createTestTask();
+        UUID correlationId = UUID.randomUUID();
+        TaskCreatedEvent event = new TaskCreatedEvent(task, correlationId);
+        String expectedPayload = "{\"taskId\":\"" + task.getId() + "\"}";
 
         when(objectMapper.writeValueAsString(event)).thenReturn(expectedPayload);
         when(outboxEventRepository.save(any(OutboxEvent.class))).thenAnswer(i -> i.getArgument(0));
@@ -63,7 +60,7 @@ class EventPublisherServiceTest {
         verify(outboxEventRepository).save(outboxEventCaptor.capture());
         OutboxEvent savedEvent = outboxEventCaptor.getValue();
 
-        assertThat(savedEvent.getAggregateId()).isEqualTo(taskId.toString());
+        assertThat(savedEvent.getAggregateId()).isEqualTo(task.getId());
         assertThat(savedEvent.getAggregateType()).isEqualTo("Task");
         assertThat(savedEvent.getEventType()).isEqualTo("TaskCreated");
         assertThat(savedEvent.getPayload()).isEqualTo(expectedPayload);
@@ -73,13 +70,9 @@ class EventPublisherServiceTest {
     @Test
     @DisplayName("should throw RuntimeException when serialization fails")
     void shouldThrowExceptionWhenSerializationFails() throws JsonProcessingException {
-        UUID taskId = UUID.randomUUID();
-        TaskCreatedEvent event = new TaskCreatedEvent(
-            taskId,
-            "Test Task",
-            "testuser",
-            UUID.randomUUID().toString()
-        );
+        Task task = createTestTask();
+        UUID correlationId = UUID.randomUUID();
+        TaskCreatedEvent event = new TaskCreatedEvent(task, correlationId);
 
         when(objectMapper.writeValueAsString(event))
             .thenThrow(new JsonProcessingException("Serialization failed") {});
@@ -87,5 +80,21 @@ class EventPublisherServiceTest {
         assertThatThrownBy(() -> eventPublisherService.publish(event))
             .isInstanceOf(RuntimeException.class)
             .hasMessageContaining("Failed to serialize event");
+    }
+
+    private Task createTestTask() {
+        Task task = new Task("Test Task");
+        task.setDescription("Test Description");
+        task.setAssignee("testuser");
+        task.setStatus(TaskStatus.PENDING);
+        // Use reflection to set ID
+        try {
+            java.lang.reflect.Field idField = Task.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(task, UUID.randomUUID());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return task;
     }
 }

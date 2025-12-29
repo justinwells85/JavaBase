@@ -53,7 +53,7 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("should handle DuplicateEventException with 409")
     void shouldHandleDuplicateEvent() {
-        String eventId = UUID.randomUUID().toString();
+        UUID eventId = UUID.randomUUID();
         DuplicateEventException ex = new DuplicateEventException(eventId);
 
         ResponseEntity<ErrorResponse> response = exceptionHandler.handleDuplicateEvent(ex, request);
