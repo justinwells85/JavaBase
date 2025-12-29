@@ -62,7 +62,7 @@ class EventPublisherServiceTest {
 
         assertThat(savedEvent.getAggregateId()).isEqualTo(task.getId());
         assertThat(savedEvent.getAggregateType()).isEqualTo("Task");
-        assertThat(savedEvent.getEventType()).isEqualTo("TaskCreated");
+        assertThat(savedEvent.getEventType()).isEqualTo("TaskCreatedEvent");
         assertThat(savedEvent.getPayload()).isEqualTo(expectedPayload);
         assertThat(savedEvent.getCorrelationId()).isEqualTo(correlationId);
     }
