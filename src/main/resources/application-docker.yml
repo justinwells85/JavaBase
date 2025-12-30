@@ -1,0 +1,24 @@
+# Docker Profile Configuration
+# Used when running in Docker containers
+
+spring:
+  # Datasource - uses environment variables from docker-compose
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:javabase}
+    username: ${DB_USERNAME:javabase}
+    password: ${DB_PASSWORD:javabase}
+
+  # RabbitMQ - uses environment variables from docker-compose
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+# Logging - JSON format for container log aggregation
+logging:
+  pattern:
+    console: '{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%level","thread":"%thread","logger":"%logger{36}","message":"%msg"}%n'
+  level:
+    root: INFO
+    com.justinwells.javabase: INFO

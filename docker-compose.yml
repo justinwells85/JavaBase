@@ -1,0 +1,81 @@
+services:
+  # JavaBase Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: javabase-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=javabase
+      - DB_USERNAME=javabase
+      - DB_PASSWORD=javabase
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - javabase-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: javabase-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=javabase
+      - POSTGRES_USER=javabase
+      - POSTGRES_PASSWORD=javabase
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U javabase -d javabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - javabase-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: javabase-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - javabase-network
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+
+networks:
+  javabase-network:
+    driver: bridge
