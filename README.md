@@ -1,5 +1,7 @@
 # JavaBase - Spring Boot Microservice Template
 
+[![CI](https://github.com/justinwells85/JavaBase/actions/workflows/ci.yml/badge.svg)](https://github.com/justinwells85/JavaBase/actions/workflows/ci.yml)
+
 A production-ready Spring Boot 3.x microservice template designed for event-driven architecture with emphasis on code quality, observability, and easy AWS migration.
 
 ## Features
@@ -35,18 +37,25 @@ A production-ready Spring Boot 3.x microservice template designed for event-driv
 - Docker & Docker Compose
 - Maven 3.9+ (or use included wrapper)
 
-### Setup
+### Option 1: Docker Compose (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/justinwells85/JavaBase.git
 cd JavaBase
 
-# Start infrastructure (PostgreSQL + RabbitMQ)
-./scripts/setup-local.sh
+# Start everything (app + PostgreSQL + RabbitMQ)
+docker-compose up --build
+```
+
+### Option 2: Local Development
+
+```bash
+# Start infrastructure only
+docker-compose up postgres rabbitmq -d
 
 # Run the application
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+./mvnw spring-boot:run
 ```
 
 ### Access Points
@@ -127,8 +136,9 @@ src/main/java/com/justinwells/javabase/
 
 ### Profiles
 
-- `dev` - Development (verbose logging, Swagger enabled)
-- `test` - Testing (Testcontainers, fast polling)
+- `default` - Local development
+- `docker` - Docker container (JSON logging)
+- `test` - Testing (H2, Testcontainers for integration)
 - `prod` - Production (JSON logging, security enabled)
 
 ## Development
@@ -140,7 +150,7 @@ src/main/java/com/justinwells/javabase/
 ./mvnw test
 
 # Integration tests (requires Docker)
-./mvnw verify
+./mvnw verify -DskipITs=false
 
 # With coverage report
 ./mvnw verify jacoco:report
@@ -151,7 +161,7 @@ open target/site/jacoco/index.html
 
 ```bash
 # Run all quality checks
-./scripts/run-quality-checks.sh
+./mvnw verify -DskipTests
 
 # Individual checks
 ./mvnw checkstyle:check
@@ -159,14 +169,17 @@ open target/site/jacoco/index.html
 ./mvnw spotbugs:check
 ```
 
-### Building Docker Image
+### Docker
 
 ```bash
-# Build image
-docker build -t javabase:latest -f docker/Dockerfile .
+# Build and run full stack
+docker-compose up --build
 
-# Run full stack
-docker-compose -f docker/docker-compose.yml up
+# Build image only
+docker build -t javabase:latest .
+
+# Stop and cleanup
+docker-compose down -v
 ```
 
 ## Building a New Service from This Template
@@ -180,15 +193,6 @@ docker-compose -f docker/docker-compose.yml up
 5. **Replace** the Task domain with your domain entities
 6. **Create** your own domain events
 7. **Update** the README and documentation
-
-## Architecture Decisions
-
-See the [docs/](docs/) directory for Architecture Decision Records (ADRs):
-
-- [ADR-001: Event-Driven Architecture](docs/ADR-001-event-driven-architecture.md)
-- [ADR-002: Outbox Pattern](docs/ADR-002-outbox-pattern.md)
-- [ADR-003: Database Choice](docs/ADR-003-database-choice.md)
-- [ADR-004: API Versioning Strategy](docs/ADR-004-api-versioning-strategy.md)
 
 ## AWS Migration Path
 
