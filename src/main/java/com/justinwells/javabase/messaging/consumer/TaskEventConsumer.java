@@ -40,6 +40,7 @@ public class TaskEventConsumer {
      * @param message the incoming message
      */
     @Transactional
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public void handleEvent(Message<String> message) {
         String eventId = (String) message.getHeaders().get("eventId");
         String eventType = (String) message.getHeaders().get("eventType");
@@ -79,6 +80,7 @@ public class TaskEventConsumer {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private void processEvent(String eventType, String payload) {
         try {
             JsonNode eventData = objectMapper.readTree(payload);
