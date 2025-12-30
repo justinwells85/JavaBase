@@ -1,0 +1,90 @@
+# Development dependencies only (run app locally with IDE/Maven)
+# Usage: docker compose -f docker-compose.dev.yml up -d
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: javabase-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: javabase
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d javabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - javabase-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: javabase-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI (guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - javabase-network
+
+  # pgAdmin for database management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: javabase-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - javabase-network
+    profiles:
+      - tools
+
+  # Redis for caching (optional, if you want distributed cache)
+  redis:
+    image: redis:7-alpine
+    container_name: javabase-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - javabase-network
+    profiles:
+      - cache
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+  pgadmin-data:
+  redis-data:
+
+networks:
+  javabase-network:
+    driver: bridge
