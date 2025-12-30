@@ -116,7 +116,7 @@ class DomainEventTest {
         @Test
         @DisplayName("should create event with correct properties")
         void shouldCreateEventWithCorrectProperties() {
-            TaskDeletedEvent event = new TaskDeletedEvent(task.getId(), correlationId);
+            TaskDeletedEvent event = new TaskDeletedEvent(task, correlationId);
 
             assertThat(event.getEventId()).isNotNull();
             assertThat(event.getEventType()).isEqualTo("TaskDeletedEvent");
