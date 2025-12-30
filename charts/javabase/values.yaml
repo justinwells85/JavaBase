@@ -1,0 +1,145 @@
+# Default values for javabase.
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/justinwells85/javabase
+  pullPolicy: IfNotPresent
+  tag: ""  # Defaults to appVersion
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/actuator/prometheus"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  hosts:
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: javabase-tls
+      hosts:
+        - api.example.com
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: javabase
+          topologyKey: kubernetes.io/hostname
+
+# Application configuration
+config:
+  springProfiles: "prod"
+  serverPort: 8080
+  javaOpts: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+
+# Database configuration
+database:
+  host: postgres-service
+  port: 5432
+  name: javabase
+  poolSize: 10
+  # Credentials from secret
+  existingSecret: ""
+  secretKeys:
+    username: DB_USERNAME
+    password: DB_PASSWORD
+
+# RabbitMQ configuration
+rabbitmq:
+  host: rabbitmq-service
+  port: 5672
+  # Credentials from secret
+  existingSecret: ""
+  secretKeys:
+    username: RABBITMQ_USERNAME
+    password: RABBITMQ_PASSWORD
+
+# Outbox configuration
+outbox:
+  pollingIntervalMs: 1000
+  batchSize: 100
+
+# Idempotency configuration
+idempotency:
+  ttlHours: 24
+
+# Health probes
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

@@ -1,0 +1,22 @@
+apiVersion: v2
+name: javabase
+description: A Helm chart for JavaBase - Production-ready Spring Boot microservice template
+type: application
+version: 0.1.0
+appVersion: "0.3.0"
+
+keywords:
+  - spring-boot
+  - microservice
+  - java
+  - event-driven
+
+home: https://github.com/justinwells85/JavaBase
+sources:
+  - https://github.com/justinwells85/JavaBase
+
+maintainers:
+  - name: Justin Wells
+    url: https://github.com/justinwells85
+
+dependencies: []
