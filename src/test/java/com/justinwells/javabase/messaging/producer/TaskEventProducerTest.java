@@ -81,7 +81,8 @@ class TaskEventProducerTest {
         @DisplayName("should return false when serialization fails")
         void shouldReturnFalseWhenSerializationFails() throws JsonProcessingException {
             DomainEvent event = createTestEvent();
-            when(objectMapper.writeValueAsString(event)).thenThrow(new JsonProcessingException("Serialization error") {});
+            when(objectMapper.writeValueAsString(event))
+                .thenThrow(new JsonProcessingException("Serialization error") {});
 
             boolean result = producer.publish(event);
 
@@ -105,9 +106,11 @@ class TaskEventProducerTest {
             Message<String> capturedMessage = messageCaptor.getValue();
             assertThat(capturedMessage.getHeaders().get("eventId")).isEqualTo(event.getEventId().toString());
             assertThat(capturedMessage.getHeaders().get("eventType")).isEqualTo(event.getEventType());
-            assertThat(capturedMessage.getHeaders().get("aggregateId")).isEqualTo(event.getAggregateId().toString());
+            assertThat(capturedMessage.getHeaders().get("aggregateId"))
+                .isEqualTo(event.getAggregateId().toString());
             assertThat(capturedMessage.getHeaders().get("aggregateType")).isEqualTo(event.getAggregateType());
-            assertThat(capturedMessage.getHeaders().get("correlationId")).isEqualTo(event.getCorrelationId().toString());
+            assertThat(capturedMessage.getHeaders().get("correlationId"))
+                .isEqualTo(event.getCorrelationId().toString());
             assertThat(capturedMessage.getHeaders().get("routingKey")).isNotNull();
         }
 
