@@ -145,10 +145,7 @@ class IdempotencyFilterTest {
         @DisplayName("should return cached response when key exists")
         void shouldReturnCachedResponseWhenKeyExists() throws ServletException, IOException {
             String idempotencyKey = UUID.randomUUID().toString();
-            IdempotencyKey cachedKey = new IdempotencyKey();
-            cachedKey.setIdempotencyKey(idempotencyKey);
-            cachedKey.setResponseStatus(201);
-            cachedKey.setResponseBody("{\"id\":\"123\"}");
+            IdempotencyKey cachedKey = new IdempotencyKey(idempotencyKey, 201, "{\"id\":\"123\"}", 24);
 
             request.setMethod("POST");
             request.setRequestURI("/api/v1/tasks");
