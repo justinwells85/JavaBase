@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: javabase
+  labels:
+    app.kubernetes.io/name: javabase
+    app.kubernetes.io/part-of: javabase

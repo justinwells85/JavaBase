@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: javabase-config
+  namespace: javabase
+  labels:
+    app.kubernetes.io/name: javabase
+    app.kubernetes.io/component: config
+data:
+  # Application Configuration
+  SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_PORT: "8080"
+
+  # Database Configuration
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "javabase"
+  DB_POOL_SIZE: "10"
+
+  # RabbitMQ Configuration
+  RABBITMQ_HOST: "rabbitmq-service"
+  RABBITMQ_PORT: "5672"
+
+  # Outbox Configuration
+  OUTBOX_POLLING_INTERVAL: "1000"
+  OUTBOX_BATCH_SIZE: "100"
+
+  # Idempotency Configuration
+  IDEMPOTENCY_TTL_HOURS: "24"
+
+  # JVM Options
+  JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
