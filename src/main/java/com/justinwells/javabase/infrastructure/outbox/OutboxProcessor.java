@@ -55,6 +55,7 @@ public class OutboxProcessor {
      */
     @Scheduled(fixedRateString = "${outbox.polling.interval-ms:1000}")
     @Transactional
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public void processOutbox() {
         List<OutboxEvent> pendingEvents = outboxEventRepository.findByStatusOrderByCreatedAtAsc(
             OutboxEventStatus.PENDING,
@@ -137,6 +138,7 @@ public class OutboxProcessor {
      */
     @Scheduled(fixedRate = 300000)
     @Transactional
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public void retryFailedEvents() {
         // Find events that failed more than 5 minutes ago
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(5);
